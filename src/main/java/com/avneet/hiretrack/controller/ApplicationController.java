@@ -6,6 +6,7 @@ import com.avneet.hiretrack.service.ApplicationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import com.avneet.hiretrack.enums.ApplicationStatus;
 
 import java.util.List;
 
@@ -47,5 +48,16 @@ public class ApplicationController {
         String email = jwtService.extractUsername(token);
 
         return applicationService.withdrawApplication(applicationId, email);
+    }
+    @GetMapping("/job/{jobId}")
+    public List<Application> getApplicants(@PathVariable Long jobId) {
+        return applicationService.getApplicants(jobId);
+    }
+
+    @PutMapping("/{applicationId}/status")
+    public String updateStatus(@PathVariable Long applicationId,
+                               @RequestParam ApplicationStatus status) {
+
+        return applicationService.updateApplicationStatus(applicationId, status);
     }
 }

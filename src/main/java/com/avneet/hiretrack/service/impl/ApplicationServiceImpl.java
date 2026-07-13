@@ -86,4 +86,26 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         return "Application Withdrawn Successfully";
     }
+    @Override
+    public List<Application> getApplicants(Long jobId) {
+
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+
+        return applicationRepository.findByJob(job);
+    }
+
+    @Override
+    public String updateApplicationStatus(Long applicationId,
+                                          ApplicationStatus status) {
+
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        application.setStatus(status);
+
+        applicationRepository.save(application);
+
+        return "Application Status Updated Successfully";
+    }
 }
