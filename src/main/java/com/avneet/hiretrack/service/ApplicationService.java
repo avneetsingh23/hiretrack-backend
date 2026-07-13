@@ -4,6 +4,7 @@ import com.avneet.hiretrack.entity.Application;
 import com.avneet.hiretrack.enums.ApplicationStatus;
 
 import java.util.List;
+import com.avneet.hiretrack.dto.DashboardResponse;
 
 public interface ApplicationService {
 
@@ -22,4 +23,5 @@ public interface ApplicationService {
     // Update application status
     String updateApplicationStatus(Long applicationId,
                                    ApplicationStatus status);
+    DashboardResponse getDashboard();
 }

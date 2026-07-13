@@ -3,6 +3,7 @@ package com.avneet.hiretrack.repository;
 import com.avneet.hiretrack.entity.Application;
 import com.avneet.hiretrack.entity.Job;
 import com.avneet.hiretrack.entity.User;
+import com.avneet.hiretrack.enums.ApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     List<Application> findByUser(User user);
 
     List<Application> findByJob(Job job);
+
+    long countByStatus(ApplicationStatus status);
 }

@@ -1,5 +1,5 @@
 package com.avneet.hiretrack.controller;
-
+import com.avneet.hiretrack.dto.DashboardResponse;
 import com.avneet.hiretrack.entity.Application;
 import com.avneet.hiretrack.security.JwtService;
 import com.avneet.hiretrack.service.ApplicationService;
@@ -59,5 +59,9 @@ public class ApplicationController {
                                @RequestParam ApplicationStatus status) {
 
         return applicationService.updateApplicationStatus(applicationId, status);
+    }
+    @GetMapping("/dashboard")
+    public DashboardResponse getDashboard() {
+        return applicationService.getDashboard();
     }
 }

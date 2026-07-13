@@ -1,5 +1,5 @@
 package com.avneet.hiretrack.service.impl;
-
+import com.avneet.hiretrack.dto.DashboardResponse;
 import com.avneet.hiretrack.entity.Application;
 import com.avneet.hiretrack.entity.Job;
 import com.avneet.hiretrack.entity.User;
@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
 import java.util.List;
 
 @Service
@@ -107,5 +108,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationRepository.save(application);
 
         return "Application Status Updated Successfully";
+
     }
+    @Override
+    public DashboardResponse getDashboard() {
+
+        return DashboardResponse.builder()
+                .totalJobs(jobRepository.count())
+                .totalApplications(applicationRepository.count())
+                .shortlisted(applicationRepository.countByStatus(ApplicationStatus.SHORTLISTED))
+                .rejected(applicationRepository.countByStatus(ApplicationStatus.REJECTED))
+                .build();
+    }
+
 }
