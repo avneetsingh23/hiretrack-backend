@@ -11,6 +11,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
+
 @Service
 @RequiredArgsConstructor
 public class JobServiceImpl implements JobService {
@@ -36,8 +41,18 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<Job> getAllJobs() {
-        return jobRepository.findAll();
+    public Page<Job> getAllJobs(int page,
+                                int size,
+                                String sortBy,
+                                String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+
+        return jobRepository.findAll(pageRequest);
     }
 
     @Override
@@ -77,5 +92,15 @@ public class JobServiceImpl implements JobService {
         jobRepository.delete(job);
 
         return "Job Deleted Successfully";
+    }
+    @Override
+    public List<Job> searchJobs(String keyword) {
+
+        return jobRepository
+                .findByTitleContainingIgnoreCaseOrCompanyContainingIgnoreCaseOrLocationContainingIgnoreCase(
+                        keyword,
+                        keyword,
+                        keyword
+                );
     }
 }

@@ -3,8 +3,10 @@ package com.avneet.hiretrack.controller;
 import com.avneet.hiretrack.dto.JobRequest;
 import com.avneet.hiretrack.entity.Job;
 import com.avneet.hiretrack.service.JobService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/jobs")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class JobController {
 
     private final JobService jobService;
@@ -22,8 +25,18 @@ public class JobController {
     }
 
     @GetMapping
-    public List<Job> getAllJobs() {
-        return jobService.getAllJobs();
+    public Page<Job> getAllJobs(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        return jobService.getAllJobs(page, size, sortBy, direction);
+    }
+
+    @GetMapping("/search")
+    public List<Job> searchJobs(@RequestParam String keyword) {
+        return jobService.searchJobs(keyword);
     }
 
     @GetMapping("/{id}")

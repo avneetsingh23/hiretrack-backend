@@ -3,6 +3,7 @@ import com.avneet.hiretrack.dto.DashboardResponse;
 import com.avneet.hiretrack.entity.Application;
 import com.avneet.hiretrack.security.JwtService;
 import com.avneet.hiretrack.service.ApplicationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/applications")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class ApplicationController {
 
     private final ApplicationService applicationService;
