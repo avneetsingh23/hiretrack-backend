@@ -39,4 +39,6 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+    @Column
+    private String resumeUrl;
 }
