@@ -2,6 +2,7 @@ package com.avneet.hiretrack.service.impl;
 
 import com.avneet.hiretrack.dto.JobRequest;
 import com.avneet.hiretrack.entity.Job;
+import com.avneet.hiretrack.exception.ResourceNotFoundException;
 import com.avneet.hiretrack.repository.JobRepository;
 import com.avneet.hiretrack.service.JobService;
 import lombok.RequiredArgsConstructor;
@@ -41,14 +42,18 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Job getJobById(Long id) {
+
         return jobRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Job not found"));
     }
+
     @Override
     public String updateJob(Long id, JobRequest request) {
 
         Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Job not found"));
 
         job.setTitle(request.getTitle());
         job.setCompany(request.getCompany());
@@ -61,11 +66,13 @@ public class JobServiceImpl implements JobService {
 
         return "Job Updated Successfully";
     }
+
     @Override
     public String deleteJob(Long id) {
 
         Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Job not found"));
 
         jobRepository.delete(job);
 

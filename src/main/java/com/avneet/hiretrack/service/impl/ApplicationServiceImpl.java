@@ -1,9 +1,11 @@
 package com.avneet.hiretrack.service.impl;
+
 import com.avneet.hiretrack.dto.DashboardResponse;
 import com.avneet.hiretrack.entity.Application;
 import com.avneet.hiretrack.entity.Job;
 import com.avneet.hiretrack.entity.User;
 import com.avneet.hiretrack.enums.ApplicationStatus;
+import com.avneet.hiretrack.exception.ResourceNotFoundException;
 import com.avneet.hiretrack.repository.ApplicationRepository;
 import com.avneet.hiretrack.repository.JobRepository;
 import com.avneet.hiretrack.repository.UserRepository;
@@ -12,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-
 import java.util.List;
 
 @Service
@@ -29,12 +30,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         System.out.println("Email: " + email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
 
         System.out.println("User Found: " + user.getEmail());
 
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Job not found"));
 
         System.out.println("Job Found: " + job.getTitle());
 
@@ -65,7 +68,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<Application> getMyApplications(String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
 
         return applicationRepository.findByUser(user);
     }
@@ -74,10 +78,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     public String withdrawApplication(Long applicationId, String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
 
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Application not found"));
 
         if (!application.getUser().getId().equals(user.getId())) {
             return "You are not authorized to withdraw this application";
@@ -87,11 +93,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         return "Application Withdrawn Successfully";
     }
+
     @Override
     public List<Application> getApplicants(Long jobId) {
 
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Job not found"));
 
         return applicationRepository.findByJob(job);
     }
@@ -101,15 +109,16 @@ public class ApplicationServiceImpl implements ApplicationService {
                                           ApplicationStatus status) {
 
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Application not found"));
 
         application.setStatus(status);
 
         applicationRepository.save(application);
 
         return "Application Status Updated Successfully";
-
     }
+
     @Override
     public DashboardResponse getDashboard() {
 
@@ -120,5 +129,4 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .rejected(applicationRepository.countByStatus(ApplicationStatus.REJECTED))
                 .build();
     }
-
 }

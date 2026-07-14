@@ -3,6 +3,7 @@ package com.avneet.hiretrack.controller;
 import com.avneet.hiretrack.dto.JobRequest;
 import com.avneet.hiretrack.entity.Job;
 import com.avneet.hiretrack.service.JobService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class JobController {
     private final JobService jobService;
 
     @PostMapping
-    public String addJob(@RequestBody JobRequest request) {
+    public String addJob(@Valid @RequestBody JobRequest request) {
         return jobService.addJob(request);
     }
 
@@ -29,12 +30,14 @@ public class JobController {
     public Job getJobById(@PathVariable Long id) {
         return jobService.getJobById(id);
     }
+
     @PutMapping("/{id}")
     public String updateJob(@PathVariable Long id,
-                            @RequestBody JobRequest request) {
+                            @Valid @RequestBody JobRequest request) {
 
         return jobService.updateJob(id, request);
     }
+
     @DeleteMapping("/{id}")
     public String deleteJob(@PathVariable Long id) {
         return jobService.deleteJob(id);

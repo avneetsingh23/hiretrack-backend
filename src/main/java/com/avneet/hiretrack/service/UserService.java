@@ -2,7 +2,7 @@ package com.avneet.hiretrack.service;
 
 import com.avneet.hiretrack.dto.LoginRequest;
 import com.avneet.hiretrack.dto.RegisterRequest;
-import com.avneet.hiretrack.entity.User;   // <-- Ye import add karo
+import com.avneet.hiretrack.entity.User;
 
 import org.springframework.web.multipart.MultipartFile;
 

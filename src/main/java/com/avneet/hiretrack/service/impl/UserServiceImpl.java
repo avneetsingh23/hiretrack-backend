@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.avneet.hiretrack.exception.ResourceNotFoundException;
+
 import java.time.LocalDateTime;
 
 import com.avneet.hiretrack.security.JwtService;
@@ -51,11 +53,8 @@ public class UserServiceImpl implements UserService {
     public String login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElse(null);
-
-        if (user == null) {
-            return "User not found";
-        }
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return "Invalid Password";
@@ -67,7 +66,7 @@ public class UserServiceImpl implements UserService {
     public String uploadResume(String email, MultipartFile file) throws IOException {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (file.isEmpty()) {
             return "Please select a file";
@@ -89,6 +88,6 @@ public class UserServiceImpl implements UserService {
     public User getUserByEmail(String email) {
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }
