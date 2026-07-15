@@ -1,20 +1,19 @@
 package com.avneet.hiretrack.service.impl;
 
 import com.avneet.hiretrack.dto.JobRequest;
+import com.avneet.hiretrack.dto.JobResponse;
 import com.avneet.hiretrack.entity.Job;
 import com.avneet.hiretrack.exception.ResourceNotFoundException;
 import com.avneet.hiretrack.repository.JobRepository;
 import com.avneet.hiretrack.service.JobService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-
 
 @Service
 @RequiredArgsConstructor
@@ -41,10 +40,10 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Page<Job> getAllJobs(int page,
-                                int size,
-                                String sortBy,
-                                String direction) {
+    public Page<JobResponse> getAllJobs(int page,
+                                        int size,
+                                        String sortBy,
+                                        String direction) {
 
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
@@ -52,15 +51,18 @@ public class JobServiceImpl implements JobService {
 
         PageRequest pageRequest = PageRequest.of(page, size, sort);
 
-        return jobRepository.findAll(pageRequest);
+        return jobRepository.findAll(pageRequest)
+                .map(this::mapToResponse);
     }
 
     @Override
-    public Job getJobById(Long id) {
+    public JobResponse getJobById(Long id) {
 
-        return jobRepository.findById(id)
+        Job job = jobRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Job not found"));
+
+        return mapToResponse(job);
     }
 
     @Override
@@ -93,14 +95,35 @@ public class JobServiceImpl implements JobService {
 
         return "Job Deleted Successfully";
     }
+
     @Override
-    public List<Job> searchJobs(String keyword) {
+    public List<JobResponse> searchJobs(String keyword) {
 
         return jobRepository
                 .findByTitleContainingIgnoreCaseOrCompanyContainingIgnoreCaseOrLocationContainingIgnoreCase(
                         keyword,
                         keyword,
                         keyword
-                );
+                )
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    // ===========================
+    // Entity -> DTO Mapper
+    // ===========================
+    private JobResponse mapToResponse(Job job) {
+
+        return JobResponse.builder()
+                .id(job.getId())
+                .title(job.getTitle())
+                .company(job.getCompany())
+                .location(job.getLocation())
+                .jobType(job.getJobType())
+                .description(job.getDescription())
+                .salary(job.getSalary())
+                .createdAt(job.getCreatedAt())
+                .build();
     }
 }
