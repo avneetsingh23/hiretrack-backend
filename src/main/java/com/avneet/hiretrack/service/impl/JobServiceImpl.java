@@ -15,14 +15,23 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.avneet.hiretrack.entity.User;
+import com.avneet.hiretrack.enums.Role;
+import com.avneet.hiretrack.repository.UserRepository;
+
 @Service
 @RequiredArgsConstructor
 public class JobServiceImpl implements JobService {
 
     private final JobRepository jobRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public String addJob(JobRequest request) {
+    public String addJob(JobRequest request, String email){
+
+        User recruiter = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
 
         Job job = Job.builder()
                 .title(request.getTitle())
@@ -32,6 +41,7 @@ public class JobServiceImpl implements JobService {
                 .description(request.getDescription())
                 .salary(request.getSalary())
                 .createdAt(LocalDateTime.now())
+                .recruiter(recruiter)
                 .build();
 
         jobRepository.save(job);
@@ -66,11 +76,22 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public String updateJob(Long id, JobRequest request) {
+    public String updateJob(Long id, JobRequest request, String email){
 
         Job job = jobRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Job not found"));
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+
+        if (currentUser.getRole() != Role.ADMIN &&
+                !job.getRecruiter().getId().equals(currentUser.getId())) {
+
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Access Denied");
+        }
 
         job.setTitle(request.getTitle());
         job.setCompany(request.getCompany());
@@ -84,18 +105,29 @@ public class JobServiceImpl implements JobService {
         return "Job Updated Successfully";
     }
 
+
     @Override
-    public String deleteJob(Long id) {
+    public String deleteJob(Long id, String email) {
 
         Job job = jobRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Job not found"));
 
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+
+        if (currentUser.getRole() != Role.ADMIN &&
+                !job.getRecruiter().getId().equals(currentUser.getId())) {
+
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Access Denied");
+        }
+
         jobRepository.delete(job);
 
         return "Job Deleted Successfully";
     }
-
     @Override
     public List<JobResponse> searchJobs(String keyword) {
 
@@ -110,9 +142,6 @@ public class JobServiceImpl implements JobService {
                 .toList();
     }
 
-    // ===========================
-    // Entity -> DTO Mapper
-    // ===========================
     private JobResponse mapToResponse(Job job) {
 
         return JobResponse.builder()

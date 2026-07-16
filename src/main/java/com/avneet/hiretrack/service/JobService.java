@@ -9,7 +9,7 @@ import java.util.List;
 public interface JobService {
 
     // Add Job
-    String addJob(JobRequest request);
+    String addJob(JobRequest request, String email);
 
     // Get All Jobs
     Page<JobResponse> getAllJobs(
@@ -22,10 +22,13 @@ public interface JobService {
     JobResponse getJobById(Long id);
 
     // Update Job
-    String updateJob(Long id, JobRequest request);
+    String updateJob(Long id,
+                     JobRequest request,
+                     String email);
 
     // Delete Job
-    String deleteJob(Long id);
+    String deleteJob(Long id,
+                     String email);
 
     // Search Jobs
     List<JobResponse> searchJobs(String keyword);

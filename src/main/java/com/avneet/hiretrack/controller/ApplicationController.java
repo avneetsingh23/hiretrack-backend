@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import com.avneet.hiretrack.enums.ApplicationStatus;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.util.List;
 
 @RestController
@@ -20,6 +22,7 @@ public class ApplicationController {
     private final ApplicationService applicationService;
     private final JwtService jwtService;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/{jobId}")
     public String applyJob(@PathVariable Long jobId,
                            HttpServletRequest request) {
@@ -31,6 +34,7 @@ public class ApplicationController {
         return applicationService.applyJob(jobId, email);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/my")
     public List<Application> getMyApplications(HttpServletRequest request) {
 
@@ -41,6 +45,7 @@ public class ApplicationController {
         return applicationService.getMyApplications(email);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{applicationId}")
     public String withdrawApplication(@PathVariable Long applicationId,
                                       HttpServletRequest request) {
@@ -51,17 +56,20 @@ public class ApplicationController {
 
         return applicationService.withdrawApplication(applicationId, email);
     }
+    @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
     @GetMapping("/job/{jobId}")
     public List<Application> getApplicants(@PathVariable Long jobId) {
         return applicationService.getApplicants(jobId);
     }
 
+    @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
     @PutMapping("/{applicationId}/status")
     public String updateStatus(@PathVariable Long applicationId,
                                @RequestParam ApplicationStatus status) {
 
         return applicationService.updateApplicationStatus(applicationId, status);
     }
+    @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
     @GetMapping("/dashboard")
     public DashboardResponse getDashboard() {
         return applicationService.getDashboard();

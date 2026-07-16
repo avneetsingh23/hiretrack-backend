@@ -32,4 +32,9 @@ public class Job {
     private Double salary;
 
     private LocalDateTime createdAt;
+
+    // Recruiter who created this job
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recruiter_id", nullable = false)
+    private User recruiter;
 }
