@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
+import com.avneet.hiretrack.entity.User;
+
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
@@ -13,4 +15,5 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             String company,
             String location
     );
+    List<Job> findByRecruiter(User recruiter);
 }

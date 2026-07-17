@@ -141,6 +141,18 @@ public class JobServiceImpl implements JobService {
                 .map(this::mapToResponse)
                 .toList();
     }
+    @Override
+    public List<JobResponse> getMyJobs(String email) {
+
+        User recruiter = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+
+        return jobRepository.findByRecruiter(recruiter)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
 
     private JobResponse mapToResponse(Job job) {
 

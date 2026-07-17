@@ -8,6 +8,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.avneet.hiretrack.dto.ForgotPasswordRequest;
+import com.avneet.hiretrack.dto.VerifyOtpRequest;
+import com.avneet.hiretrack.dto.ResetPasswordRequest;
+import com.avneet.hiretrack.service.PasswordResetService;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<String>> register(
@@ -45,4 +50,47 @@ public class AuthController {
                         .build()
         );
     }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<String>> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+
+        String message = passwordResetService.sendOtp(request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .success(true)
+                        .message(message)
+                        .data(null)
+                        .build()
+        );
+    }
+    @PostMapping("/verify-otp")
+    public ResponseEntity<ApiResponse<String>> verifyOtp(
+            @Valid @RequestBody VerifyOtpRequest request) {
+
+        String message = passwordResetService.verifyOtp(request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .success(true)
+                        .message(message)
+                        .data(null)
+                        .build()
+        );
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<String>> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
+
+        String message = passwordResetService.resetPassword(request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .success(true)
+                        .message(message)
+                        .data(null)
+                        .build()
+        );
+    }
+
 }

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @RestController
@@ -59,6 +60,12 @@ public class JobController {
             @RequestParam String keyword) {
 
         return jobService.searchJobs(keyword);
+    }
+    @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
+    @GetMapping("/my-jobs")
+    public List<JobResponse> getMyJobs(Authentication authentication) {
+
+        return jobService.getMyJobs(authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('USER','RECRUITER','ADMIN')")

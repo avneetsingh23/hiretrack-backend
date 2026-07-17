@@ -32,4 +32,6 @@ public interface JobService {
 
     // Search Jobs
     List<JobResponse> searchJobs(String keyword);
+    // My Jobs
+    List<JobResponse> getMyJobs(String email);
 }
