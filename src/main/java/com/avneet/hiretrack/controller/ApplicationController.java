@@ -59,19 +59,40 @@ public class ApplicationController {
     @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
     @GetMapping("/job/{jobId}")
     public List<Application> getApplicants(@PathVariable Long jobId) {
+
         return applicationService.getApplicants(jobId);
     }
+    @PreAuthorize("hasRole('RECRUITER')")
+    @GetMapping("/recruiter/applicants")
+    public List<Application> getRecruiterApplicants(HttpServletRequest request) {
 
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+        String email = jwtService.extractUsername(token);
+
+        return applicationService.getRecruiterApplicants(email);
+    }
     @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
     @PutMapping("/{applicationId}/status")
     public String updateStatus(@PathVariable Long applicationId,
-                               @RequestParam ApplicationStatus status) {
+                               @RequestParam ApplicationStatus status,
+                               HttpServletRequest request) {
 
-        return applicationService.updateApplicationStatus(applicationId, status);
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+        String email = jwtService.extractUsername(token);
+
+        return applicationService.updateApplicationStatus(
+                applicationId,
+                status,
+                email
+        );
     }
     @PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
     @GetMapping("/dashboard")
     public DashboardResponse getDashboard() {
+
         return applicationService.getDashboard();
     }
+
 }

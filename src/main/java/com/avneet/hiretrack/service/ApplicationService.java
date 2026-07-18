@@ -20,8 +20,13 @@ public interface ApplicationService {
     // Get all applicants for a particular job
     List<Application> getApplicants(Long jobId);
 
+    // NEW
+    List<Application> getRecruiterApplicants(String email);
+
     // Update application status
     String updateApplicationStatus(Long applicationId,
-                                   ApplicationStatus status);
+                                    ApplicationStatus status,
+                                    String email);
+
     DashboardResponse getDashboard();
 }

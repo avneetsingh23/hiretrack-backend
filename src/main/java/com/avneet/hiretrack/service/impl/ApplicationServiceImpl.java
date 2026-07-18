@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.avneet.hiretrack.enums.Role;
+
 @Service
 @RequiredArgsConstructor
 public class ApplicationServiceImpl implements ApplicationService {
@@ -103,14 +105,33 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         return applicationRepository.findByJob(job);
     }
+    @Override
+    public List<Application> getRecruiterApplicants(String email) {
+
+        User recruiter = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Recruiter not found"));
+
+        return applicationRepository.findByJobRecruiter(recruiter);
+    }
 
     @Override
     public String updateApplicationStatus(Long applicationId,
-                                          ApplicationStatus status) {
+                                          ApplicationStatus status,
+                                          String email) {
+
+        User recruiter = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Recruiter not found"));
 
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Application not found"));
+
+        // Ownership Check
+        if (!application.getJob().getRecruiter().getId().equals(recruiter.getId())) {
+            return "You are not authorized to update this application";
+        }
 
         application.setStatus(status);
 
@@ -123,6 +144,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     public DashboardResponse getDashboard() {
 
         return DashboardResponse.builder()
+                .totalUsers(userRepository.count())
+                .totalRecruiters(userRepository.countByRole(Role.RECRUITER))
                 .totalJobs(jobRepository.count())
                 .totalApplications(applicationRepository.count())
                 .shortlisted(applicationRepository.countByStatus(ApplicationStatus.SHORTLISTED))

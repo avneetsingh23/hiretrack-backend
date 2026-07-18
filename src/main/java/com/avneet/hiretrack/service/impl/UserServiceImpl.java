@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
                         new ResourceNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return "Invalid Password";
+            throw new ResourceNotFoundException("Invalid Password");
         }
 
         return jwtService.generateToken(user.getEmail());
