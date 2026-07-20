@@ -165,7 +165,7 @@ DELETE /api/admin/jobs/{id}
 Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/HireTrack.git
+git clone https://github.com/avneetsingh23/HireTrack.git
 ```
 
 Go to Project
