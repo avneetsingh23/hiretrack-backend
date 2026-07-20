@@ -16,4 +16,5 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             String location
     );
     List<Job> findByRecruiter(User recruiter);
+    boolean existsByRecruiter(User recruiter);
 }

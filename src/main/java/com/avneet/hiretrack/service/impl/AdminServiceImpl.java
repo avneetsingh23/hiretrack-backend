@@ -43,6 +43,21 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found"));
 
+        // Admin cannot be deleted
+        if (user.getRole().name().equals("ADMIN")) {
+            return "Admin cannot be deleted";
+        }
+
+        // User has applied for jobs
+        if (applicationRepository.existsByUser(user)) {
+            return "Cannot delete user because applications exist";
+        }
+
+        // Recruiter has posted jobs
+        if (jobRepository.existsByRecruiter(user)) {
+            return "Cannot delete recruiter because jobs exist";
+        }
+
         userRepository.delete(user);
 
         return "User Deleted Successfully";
@@ -54,6 +69,11 @@ public class AdminServiceImpl implements AdminService {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Job not found"));
+
+        // Job has applications
+        if (applicationRepository.existsByJob(job)) {
+            return "Cannot delete job because applications exist";
+        }
 
         jobRepository.delete(job);
 

@@ -1,9 +1,12 @@
 package com.avneet.hiretrack.dto;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.DecimalMin;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+
 
 @Data
 public class JobRequest {
@@ -24,6 +27,7 @@ public class JobRequest {
     private String description;
 
     @NotNull(message = "Salary is required")
-    @Min(value = 1, message = "Salary must be greater than 0")
+    @DecimalMin(value = "1.0", inclusive = true,
+            message = "Salary must be greater than 0")
     private Double salary;
 }

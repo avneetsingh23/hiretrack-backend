@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import jakarta.validation.constraints.Pattern;
+
 @Data
 public class VerifyOtpRequest {
 
@@ -12,6 +14,7 @@ public class VerifyOtpRequest {
     private String email;
 
     @NotBlank(message = "OTP is required")
+    @Pattern(regexp = "\\d{6}", message = "OTP must be exactly 6 digits")
     private String otp;
 
 }

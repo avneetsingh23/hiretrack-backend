@@ -23,8 +23,11 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException ex) {
 
         String errorMessage = ex.getBindingResult()
-                .getFieldError()
-                .getDefaultMessage();
+                .getFieldErrors()
+                .stream()
+                .findFirst()
+                .map(error -> error.getDefaultMessage())
+                .orElse("Validation failed");
 
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }

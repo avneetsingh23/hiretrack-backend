@@ -21,4 +21,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     // NEW
     List<Application> findByJobRecruiter(User recruiter);
+
+    boolean existsByUser(User user);
+
+    boolean existsByJob(Job job);
 }
