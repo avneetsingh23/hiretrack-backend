@@ -1,5 +1,6 @@
 package com.avneet.hiretrack.exception;
 
+import com.avneet.hiretrack.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -12,14 +13,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFound(
+    public ResponseEntity<ApiResponse<String>> handleResourceNotFound(
             ResourceNotFoundException ex) {
 
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(
+                        ApiResponse.<String>builder()
+                                .success(false)
+                                .message(ex.getMessage())
+                                .data(null)
+                                .build()
+                );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationException(
+    public ResponseEntity<ApiResponse<String>> handleValidationException(
             MethodArgumentNotValidException ex) {
 
         String errorMessage = ex.getBindingResult()
@@ -29,32 +37,55 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getDefaultMessage())
                 .orElse("Validation failed");
 
-        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ApiResponse.<String>builder()
+                                .success(false)
+                                .message(errorMessage)
+                                .data(null)
+                                .build()
+                );
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleInvalidRequest(
+    public ResponseEntity<ApiResponse<String>> handleInvalidRequest(
             HttpMessageNotReadableException ex) {
 
-        return new ResponseEntity<>(
-                "Invalid request data",
-                HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ApiResponse.<String>builder()
+                                .success(false)
+                                .message("Invalid request data")
+                                .data(null)
+                                .build()
+                );
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<String> handleAccessDenied(
+    public ResponseEntity<ApiResponse<String>> handleAccessDenied(
             AccessDeniedException ex) {
 
-        return new ResponseEntity<>(
-                "Access Denied",
-                HttpStatus.FORBIDDEN);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(
+                        ApiResponse.<String>builder()
+                                .success(false)
+                                .message("Access Denied")
+                                .data(null)
+                                .build()
+                );
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception ex) {
+    public ResponseEntity<ApiResponse<String>> handleException(
+            Exception ex) {
 
-        return new ResponseEntity<>(
-                ex.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(
+                        ApiResponse.<String>builder()
+                                .success(false)
+                                .message(ex.getMessage())
+                                .data(null)
+                                .build()
+                );
     }
 }

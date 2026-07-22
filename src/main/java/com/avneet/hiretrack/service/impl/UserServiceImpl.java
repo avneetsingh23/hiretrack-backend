@@ -54,10 +54,10 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
+                        new ResourceNotFoundException("Invalid Email or Password"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new ResourceNotFoundException("Invalid Password");
+            throw new ResourceNotFoundException("Invalid Email or Password");
         }
 
         return jwtService.generateToken(user.getEmail());
