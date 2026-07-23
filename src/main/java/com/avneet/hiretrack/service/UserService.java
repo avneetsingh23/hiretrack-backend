@@ -7,12 +7,13 @@ import com.avneet.hiretrack.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import com.avneet.hiretrack.dto.LoginResponse;
 
 public interface UserService {
 
     String register(RegisterRequest request);
 
-    String login(LoginRequest request);
+    LoginResponse login(LoginRequest request);
 
     String uploadResume(String email, MultipartFile file) throws IOException;
 

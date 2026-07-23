@@ -19,6 +19,8 @@ import com.avneet.hiretrack.util.FileUploadUtil;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
+import com.avneet.hiretrack.dto.LoginResponse;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -27,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+
 
     @Override
     public String register(RegisterRequest request) {
@@ -48,9 +51,8 @@ public class UserServiceImpl implements UserService {
 
         return "User Registered Successfully";
     }
-
     @Override
-    public String login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() ->
@@ -60,7 +62,10 @@ public class UserServiceImpl implements UserService {
             throw new ResourceNotFoundException("Invalid Email or Password");
         }
 
-        return jwtService.generateToken(user.getEmail());
+        return LoginResponse.builder()
+                .token(jwtService.generateToken(user.getEmail()))
+                .role(user.getRole().name())
+                .build();
     }
     @Override
     public String uploadResume(String email, MultipartFile file) throws IOException {

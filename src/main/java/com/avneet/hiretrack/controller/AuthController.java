@@ -12,6 +12,7 @@ import com.avneet.hiretrack.dto.ForgotPasswordRequest;
 import com.avneet.hiretrack.dto.VerifyOtpRequest;
 import com.avneet.hiretrack.dto.ResetPasswordRequest;
 import com.avneet.hiretrack.service.PasswordResetService;
+import com.avneet.hiretrack.dto.LoginResponse;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,16 +38,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
             @Valid @RequestBody LoginRequest request) {
 
-        String token = userService.login(request);
+        LoginResponse response = userService.login(request);
 
         return ResponseEntity.ok(
-                ApiResponse.<String>builder()
+                ApiResponse.<LoginResponse>builder()
                         .success(true)
                         .message("Login Successful")
-                        .data(token)
+                        .data(response)
                         .build()
         );
     }
